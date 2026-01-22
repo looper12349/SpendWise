@@ -154,11 +154,12 @@ const AddExpenseScreen = ({ navigation, route }) => {
         amountLabel: {
             color: colors.textMuted,
             fontSize: 14,
-            marginBottom: 12
+            marginBottom: 16
         },
         amountRow: {
             flexDirection: 'row',
-            alignItems: 'center'
+            alignItems: 'center',
+            justifyContent: 'center'
         },
         currencySymbol: {
             color: colors.text,
@@ -167,17 +168,15 @@ const AddExpenseScreen = ({ navigation, route }) => {
             marginRight: 8
         },
         amountInputWrapper: {
-            borderBottomWidth: 2,
-            borderBottomColor: colors.primary,
-            paddingBottom: 4
+            minWidth: 150
         },
         amountInput: {
             color: colors.text,
             fontSize: 48,
             fontWeight: '700',
-            minWidth: 100,
             textAlign: 'center',
-            padding: 0
+            padding: 0,
+            margin: 0
         },
         section: {
             marginBottom: 24
@@ -271,11 +270,12 @@ const AddExpenseScreen = ({ navigation, route }) => {
                                     placeholderTextColor={colors.textMuted}
                                     keyboardType="decimal-pad"
                                     style={styles.amountInput}
+                                    autoFocus={!isEditing}
                                 />
                             </View>
                         </View>
                         {errors.amount && (
-                            <Text style={{ color: colors.error, fontSize: 12, marginTop: 8 }}>
+                            <Text style={{ color: colors.error, fontSize: 13, marginTop: 12 }}>
                                 {errors.amount}
                             </Text>
                         )}
