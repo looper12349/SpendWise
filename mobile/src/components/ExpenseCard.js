@@ -2,11 +2,13 @@ import React from 'react';
 import { View, Text, TouchableOpacity, StyleSheet } from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
 import { useTheme } from '../context/ThemeContext';
+import { useCurrency } from '../hooks/useCurrency';
 import { categories } from '../utils/constants';
-import { formatCurrency, formatDate } from '../utils/helpers';
+import { formatDate } from '../utils/helpers';
 
-const ExpenseCard = ({ expense, onPress, currency = 'USD' }) => {
+const ExpenseCard = ({ expense, onPress }) => {
     const { colors } = useTheme();
+    const { formatCurrency } = useCurrency();
     const category = categories.find(c => c.id === expense.category) || categories[categories.length - 1];
     const categoryColor = colors.categories[expense.category] || colors.categories.other;
 
@@ -75,7 +77,7 @@ const ExpenseCard = ({ expense, onPress, currency = 'USD' }) => {
 
             <View style={styles.amountContainer}>
                 <Text style={styles.amount}>
-                    -{formatCurrency(expense.amount, currency)}
+                    -{formatCurrency(expense.amount)}
                 </Text>
                 <Text style={styles.categoryLabel}>{category.label}</Text>
             </View>

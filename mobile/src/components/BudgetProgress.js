@@ -1,14 +1,17 @@
 import React from 'react';
 import { View, Text, StyleSheet } from 'react-native';
 import { useTheme } from '../context/ThemeContext';
+import { useCurrency } from '../hooks/useCurrency';
 import { calculatePercentage } from '../utils/helpers';
 
-const BudgetProgress = ({ spent, limit, category, showLabel = true }) => {
+const BudgetProgress = ({ spent, limit, category, showLabel = true, color }) => {
     const { colors } = useTheme();
+    const { formatCurrency } = useCurrency();
     const percentage = calculatePercentage(spent, limit);
     const isOverBudget = spent > limit;
 
     const getProgressColor = () => {
+        if (color) return color;
         if (isOverBudget) return colors.error;
         if (percentage > 80) return colors.warning;
         return colors.success;
@@ -87,9 +90,9 @@ const BudgetProgress = ({ spent, limit, category, showLabel = true }) => {
             {showLabel && (
                 <View style={styles.amountRow}>
                     <Text style={[styles.spent, isOverBudget && styles.overBudget]}>
-                        ${spent.toFixed(0)}
+                        {formatCurrency(spent)}
                     </Text>
-                    <Text style={styles.limit}>of ${limit.toFixed(0)}</Text>
+                    <Text style={styles.limit}>of {formatCurrency(limit)}</Text>
                 </View>
             )}
         </View>

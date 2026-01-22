@@ -2,11 +2,12 @@ import React from 'react';
 import { View, Text, TouchableOpacity, StyleSheet } from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
 import { useTheme } from '../context/ThemeContext';
+import { useCurrency } from '../hooks/useCurrency';
 import { walletTypes } from '../utils/constants';
-import { formatCurrency } from '../utils/helpers';
 
 const WalletCard = ({ wallet, onPress }) => {
     const { colors } = useTheme();
+    const { formatCurrency } = useCurrency();
     const walletType = walletTypes.find(t => t.id === wallet.type) || walletTypes[walletTypes.length - 1];
     const memberCount = wallet.members?.length || 0;
 

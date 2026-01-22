@@ -378,7 +378,7 @@ const BudgetScreen = ({ navigation }) => {
                         <View style={styles.buttonContainer}>
                             <Button
                                 title="Save Budget"
-                                onPress={handleSaveBudget}
+                                onPress={handleSave}
                                 icon="checkmark"
                             />
                             <TouchableOpacity
