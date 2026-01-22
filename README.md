@@ -369,23 +369,4 @@ This project is licensed under the MIT License.
 
 ---
 
-## 📞 Support
-
-For support, email your.email@example.com or open an issue in the repository.
-
----
-
-## 🗺️ Roadmap
-
-- [ ] Push notifications for expense reminders
-- [ ] Receipt scanning with OCR
-- [ ] Export data to CSV/PDF
-- [ ] Recurring expense automation
-- [ ] Bank account integration
-- [ ] Multi-language support
-- [ ] Expense categories customization
-- [ ] Advanced analytics with AI insights
-
----
-
 **Made with ❤️ using React Native and Node.js**
