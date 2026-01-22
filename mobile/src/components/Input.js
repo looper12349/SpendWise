@@ -37,7 +37,7 @@ const Input = ({
             backgroundColor: colors.surface,
             borderRadius: 12,
             borderWidth: 1,
-            borderColor: isFocused ? colors.primary : colors.surfaceLight,
+            borderColor: colors.surfaceLight,
             paddingHorizontal: 16
         },
         inputError: {

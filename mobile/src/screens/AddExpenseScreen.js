@@ -11,6 +11,7 @@ import {
 } from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
 import { useTheme } from '../context/ThemeContext';
+import { useCurrency } from '../hooks/useCurrency';
 import { paymentMethods } from '../utils/constants';
 import { expensesAPI } from '../api/client';
 import Button from '../components/Button';
@@ -19,6 +20,7 @@ import CategoryPicker from '../components/CategoryPicker';
 
 const AddExpenseScreen = ({ navigation, route }) => {
     const { colors } = useTheme();
+    const { getCurrencySymbol } = useCurrency();
     const existingExpense = route.params?.expense;
     const isEditing = !!existingExpense;
 
@@ -111,52 +113,78 @@ const AddExpenseScreen = ({ navigation, route }) => {
         },
         scrollContent: {
             flexGrow: 1,
-            padding: 20,
-            paddingTop: 60
+            padding: 20
         },
         header: {
             flexDirection: 'row',
             justifyContent: 'space-between',
             alignItems: 'center',
+            paddingTop: 60,
             marginBottom: 30
         },
         backButton: {
-            flexDirection: 'row',
+            width: 40,
+            height: 40,
+            borderRadius: 20,
+            backgroundColor: colors.surface,
+            justifyContent: 'center',
             alignItems: 'center'
-        },
-        backText: {
-            color: colors.primary,
-            fontSize: 16,
-            marginLeft: 4
         },
         title: {
             color: colors.text,
-            fontSize: 20,
-            fontWeight: '600'
+            fontSize: 24,
+            fontWeight: '700'
         },
-        amountContainer: {
-            flexDirection: 'row',
-            alignItems: 'center',
+        deleteButton: {
+            width: 40,
+            height: 40,
+            borderRadius: 20,
+            backgroundColor: colors.error + '20',
             justifyContent: 'center',
-            marginBottom: 30
+            alignItems: 'center'
+        },
+        amountCard: {
+            backgroundColor: colors.surface,
+            borderRadius: 24,
+            padding: 30,
+            marginBottom: 24,
+            alignItems: 'center'
+        },
+        amountLabel: {
+            color: colors.textMuted,
+            fontSize: 14,
+            marginBottom: 12
+        },
+        amountRow: {
+            flexDirection: 'row',
+            alignItems: 'center'
         },
         currencySymbol: {
             color: colors.text,
-            fontSize: 36,
+            fontSize: 48,
             fontWeight: '700',
             marginRight: 8
         },
-        amountInput: {
-            flex: 0,
-            width: 200
+        amountInputWrapper: {
+            borderBottomWidth: 2,
+            borderBottomColor: colors.primary,
+            paddingBottom: 4
         },
-        paymentSection: {
-            marginBottom: 20
-        },
-        label: {
+        amountInputField: {
             color: colors.text,
-            fontSize: 14,
-            fontWeight: '500',
+            fontSize: 48,
+            fontWeight: '700',
+            minWidth: 100,
+            textAlign: 'center',
+            padding: 0
+        },
+        section: {
+            marginBottom: 24
+        },
+        sectionTitle: {
+            color: colors.text,
+            fontSize: 16,
+            fontWeight: '600',
             marginBottom: 12
         },
         paymentMethods: {
@@ -170,22 +198,29 @@ const AddExpenseScreen = ({ navigation, route }) => {
             backgroundColor: colors.surface,
             paddingVertical: 12,
             paddingHorizontal: 16,
-            borderRadius: 12
+            borderRadius: 12,
+            borderWidth: 2,
+            borderColor: 'transparent'
         },
         paymentChipActive: {
-            backgroundColor: colors.primary + '30'
+            backgroundColor: colors.primary + '15',
+            borderColor: colors.primary
+        },
+        paymentIcon: {
+            marginRight: 8
         },
         paymentLabel: {
             color: colors.textSecondary,
             fontSize: 14,
-            marginLeft: 8
+            fontWeight: '500'
         },
         paymentLabelActive: {
-            color: colors.primary
+            color: colors.primary,
+            fontWeight: '600'
         },
         buttons: {
-            marginTop: 'auto',
-            paddingTop: 30
+            marginTop: 20,
+            paddingBottom: 40
         }
     });
 
@@ -205,46 +240,69 @@ const AddExpenseScreen = ({ navigation, route }) => {
                             style={styles.backButton}
                             onPress={() => navigation.goBack()}
                         >
-                            <Ionicons name="arrow-back" size={20} color={colors.primary} />
-                            <Text style={styles.backText}>Back</Text>
+                            <Ionicons name="arrow-back" size={24} color={colors.text} />
                         </TouchableOpacity>
                         <Text style={styles.title}>
-                            {isEditing ? 'Edit Expense' : 'New Expense'}
+                            {isEditing ? 'Edit Expense' : 'Add Expense'}
                         </Text>
-                        <View style={{ width: 50 }} />
+                        {isEditing ? (
+                            <TouchableOpacity
+                                style={styles.deleteButton}
+                                onPress={handleDelete}
+                            >
+                                <Ionicons name="trash" size={20} color={colors.error} />
+                            </TouchableOpacity>
+                        ) : (
+                            <View style={{ width: 40 }} />
+                        )}
                     </View>
 
-                    {/* Amount Input */}
-                    <View style={styles.amountContainer}>
-                        <Text style={styles.currencySymbol}>$</Text>
-                        <Input
-                            value={amount}
-                            onChangeText={setAmount}
-                            placeholder="0.00"
-                            keyboardType="decimal-pad"
-                            error={errors.amount}
-                            style={styles.amountInput}
-                        />
+                    {/* Amount Card */}
+                    <View style={styles.amountCard}>
+                        <Text style={styles.amountLabel}>Amount</Text>
+                        <View style={styles.amountRow}>
+                            <Text style={styles.currencySymbol}>{getCurrencySymbol()}</Text>
+                            <View style={styles.amountInputWrapper}>
+                                <Input
+                                    value={amount}
+                                    onChangeText={setAmount}
+                                    placeholder="0"
+                                    keyboardType="decimal-pad"
+                                    style={{ marginBottom: 0 }}
+                                />
+                            </View>
+                        </View>
+                        {errors.amount && (
+                            <Text style={{ color: colors.error, fontSize: 12, marginTop: 8 }}>
+                                {errors.amount}
+                            </Text>
+                        )}
                     </View>
 
                     {/* Category Picker */}
-                    <CategoryPicker
-                        selected={category}
-                        onSelect={setCategory}
-                    />
+                    <View style={styles.section}>
+                        <Text style={styles.sectionTitle}>Category</Text>
+                        <CategoryPicker
+                            selected={category}
+                            onSelect={setCategory}
+                        />
+                    </View>
 
                     {/* Description */}
-                    <Input
-                        label="Description (Optional)"
-                        value={description}
-                        onChangeText={setDescription}
-                        placeholder="What was this expense for?"
-                        icon="create"
-                    />
+                    <View style={styles.section}>
+                        <Text style={styles.sectionTitle}>Description (Optional)</Text>
+                        <Input
+                            value={description}
+                            onChangeText={setDescription}
+                            placeholder="What was this for?"
+                            icon="create"
+                            style={{ marginBottom: 0 }}
+                        />
+                    </View>
 
                     {/* Payment Method */}
-                    <View style={styles.paymentSection}>
-                        <Text style={styles.label}>Payment Method</Text>
+                    <View style={styles.section}>
+                        <Text style={styles.sectionTitle}>Payment Method</Text>
                         <View style={styles.paymentMethods}>
                             {paymentMethods.map((method) => (
                                 <TouchableOpacity
@@ -254,11 +312,13 @@ const AddExpenseScreen = ({ navigation, route }) => {
                                         paymentMethod === method.id && styles.paymentChipActive
                                     ]}
                                     onPress={() => setPaymentMethod(method.id)}
+                                    activeOpacity={0.7}
                                 >
                                     <Ionicons
                                         name={method.icon}
-                                        size={18}
+                                        size={20}
                                         color={paymentMethod === method.id ? colors.primary : colors.textSecondary}
+                                        style={styles.paymentIcon}
                                     />
                                     <Text style={[
                                         styles.paymentLabel,
@@ -277,19 +337,9 @@ const AddExpenseScreen = ({ navigation, route }) => {
                             title={isEditing ? 'Update Expense' : 'Add Expense'}
                             onPress={handleSave}
                             loading={loading}
-                            size="large"
                             icon={isEditing ? 'checkmark' : 'add'}
                         />
-
-                        {isEditing && (
-                            <Button
-                                title="Delete Expense"
-                                onPress={handleDelete}
-                                variant="danger"
-                                icon="trash"
-                                style={{ marginTop: 12 }}
-                            />
-                        )}
+                    </View>
                     </View>
                 </ScrollView>
             </KeyboardAvoidingView>
