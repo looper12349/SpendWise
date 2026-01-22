@@ -7,6 +7,7 @@ import {
     RefreshControl,
     TouchableOpacity
 } from 'react-native';
+import { useFocusEffect } from '@react-navigation/native';
 import { Ionicons } from '@expo/vector-icons';
 import { useTheme } from '../context/ThemeContext';
 import { categories } from '../utils/constants';
@@ -58,6 +59,13 @@ const ExpensesScreen = ({ navigation }) => {
         setLoading(true);
         fetchExpenses(true);
     }, [selectedCategory]);
+
+    useFocusEffect(
+        useCallback(() => {
+            setPage(1);
+            fetchExpenses(true);
+        }, [selectedCategory])
+    );
 
     const onRefresh = () => {
         setRefreshing(true);

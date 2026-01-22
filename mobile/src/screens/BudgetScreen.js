@@ -8,6 +8,7 @@ import {
     TouchableOpacity,
     Alert
 } from 'react-native';
+import { useFocusEffect } from '@react-navigation/native';
 import { Ionicons } from '@expo/vector-icons';
 import { useTheme } from '../context/ThemeContext';
 import { categories } from '../utils/constants';
@@ -52,6 +53,12 @@ const BudgetScreen = ({ navigation }) => {
     useEffect(() => {
         fetchBudget();
     }, [fetchBudget]);
+
+    useFocusEffect(
+        useCallback(() => {
+            fetchBudget();
+        }, [fetchBudget])
+    );
 
     const onRefresh = () => {
         setRefreshing(true);

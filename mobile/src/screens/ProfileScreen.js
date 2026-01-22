@@ -1,21 +1,38 @@
-import React from 'react';
+import React, { useState } from 'react';
 import {
     View,
     Text,
     StyleSheet,
     ScrollView,
     TouchableOpacity,
-    Alert
+    Alert,
+    Modal
 } from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
 import { useTheme, themes } from '../context/ThemeContext';
 import { useAuth } from '../context/AuthContext';
 import { getInitials } from '../utils/helpers';
 import Button from '../components/Button';
+import Input from '../components/Input';
 
 const ProfileScreen = ({ navigation }) => {
     const { colors, theme, setTheme, availableThemes } = useTheme();
-    const { user, logout } = useAuth();
+    const { user, logout, updateProfile } = useAuth();
+    
+    const [showEditModal, setShowEditModal] = useState(false);
+    const [editName, setEditName] = useState(user?.name || '');
+    const [editCurrency, setEditCurrency] = useState(user?.currency || 'USD');
+    const [updating, setUpdating] = useState(false);
+
+    const currencies = [
+        { code: 'USD', symbol: '$', name: 'US Dollar' },
+        { code: 'EUR', symbol: '€', name: 'Euro' },
+        { code: 'GBP', symbol: '£', name: 'British Pound' },
+        { code: 'INR', symbol: '₹', name: 'Indian Rupee' },
+        { code: 'JPY', symbol: '¥', name: 'Japanese Yen' },
+        { code: 'AUD', symbol: 'A$', name: 'Australian Dollar' },
+        { code: 'CAD', symbol: 'C$', name: 'Canadian Dollar' },
+    ];
 
     const handleLogout = () => {
         Alert.alert(
@@ -34,6 +51,33 @@ const ProfileScreen = ({ navigation }) => {
 
     const handleThemeChange = (themeId) => {
         setTheme(themeId);
+    };
+
+    const handleEditProfile = () => {
+        setEditName(user?.name || '');
+        setEditCurrency(user?.currency || 'USD');
+        setShowEditModal(true);
+    };
+
+    const handleSaveProfile = async () => {
+        if (!editName.trim()) {
+            Alert.alert('Error', 'Name cannot be empty');
+            return;
+        }
+
+        setUpdating(true);
+        try {
+            await updateProfile({
+                name: editName.trim(),
+                currency: editCurrency
+            });
+            setShowEditModal(false);
+            Alert.alert('Success', 'Profile updated successfully!');
+        } catch (error) {
+            Alert.alert('Error', 'Failed to update profile');
+        } finally {
+            setUpdating(false);
+        }
     };
 
     const styles = StyleSheet.create({
@@ -183,16 +227,83 @@ const ProfileScreen = ({ navigation }) => {
             color: colors.textMuted,
             fontSize: 12,
             textAlign: 'center'
+        },
+        modalOverlay: {
+            flex: 1,
+            backgroundColor: 'rgba(0, 0, 0, 0.5)',
+            justifyContent: 'center',
+            alignItems: 'center',
+            padding: 20
+        },
+        modalContent: {
+            backgroundColor: colors.surface,
+            borderRadius: 24,
+            padding: 24,
+            width: '100%',
+            maxWidth: 400
+        },
+        modalTitle: {
+            color: colors.text,
+            fontSize: 22,
+            fontWeight: '700',
+            marginBottom: 20
+        },
+        currencyGrid: {
+            flexDirection: 'row',
+            flexWrap: 'wrap',
+            gap: 10,
+            marginBottom: 20
+        },
+        currencyOption: {
+            backgroundColor: colors.surfaceLight,
+            paddingVertical: 10,
+            paddingHorizontal: 16,
+            borderRadius: 12,
+            borderWidth: 2,
+            borderColor: 'transparent'
+        },
+        currencyOptionActive: {
+            borderColor: colors.primary,
+            backgroundColor: colors.primary + '20'
+        },
+        currencyText: {
+            color: colors.text,
+            fontSize: 14,
+            fontWeight: '500'
+        },
+        modalButtons: {
+            flexDirection: 'row',
+            gap: 12,
+            marginTop: 10
+        },
+        cancelButton: {
+            flex: 1,
+            backgroundColor: colors.surfaceLight,
+            paddingVertical: 14,
+            borderRadius: 12,
+            alignItems: 'center'
+        },
+        cancelButtonText: {
+            color: colors.text,
+            fontSize: 15,
+            fontWeight: '600'
+        },
+        editButton: {
+            position: 'absolute',
+            top: 20,
+            right: 20,
+            backgroundColor: colors.primary + '20',
+            width: 36,
+            height: 36,
+            borderRadius: 18,
+            justifyContent: 'center',
+            alignItems: 'center'
         }
     });
 
     const menuItems = [
-        { icon: 'person', label: 'Edit Profile', onPress: () => { } },
-        { icon: 'cash', label: 'Currency Settings', onPress: () => { } },
-        { icon: 'notifications', label: 'Notifications', onPress: () => { } },
-        { icon: 'shield-checkmark', label: 'Privacy & Security', onPress: () => { } },
-        { icon: 'download', label: 'Export Data', onPress: () => { } },
-        { icon: 'help-circle', label: 'Help & Support', onPress: () => { } },
+        { icon: 'help-circle', label: 'Help & Support', onPress: () => Alert.alert('Help', 'Contact: support@spendwise.com') },
+        { icon: 'information-circle', label: 'About', onPress: () => Alert.alert('About', 'SpendWise v1.0.0\nExpense tracking made simple') },
     ];
 
     return (
@@ -205,6 +316,13 @@ const ProfileScreen = ({ navigation }) => {
 
                 {/* Profile Card */}
                 <View style={styles.profileCard}>
+                    <TouchableOpacity 
+                        style={styles.editButton}
+                        onPress={handleEditProfile}
+                    >
+                        <Ionicons name="pencil" size={18} color={colors.primary} />
+                    </TouchableOpacity>
+                    
                     <View style={styles.avatar}>
                         <Text style={styles.avatarText}>{getInitials(user?.name)}</Text>
                     </View>
@@ -213,18 +331,13 @@ const ProfileScreen = ({ navigation }) => {
 
                     <View style={styles.statsRow}>
                         <View style={styles.statItem}>
-                            <Text style={styles.statValue}>--</Text>
-                            <Text style={styles.statLabel}>Expenses</Text>
-                        </View>
-                        <View style={styles.statDivider} />
-                        <View style={styles.statItem}>
-                            <Text style={styles.statValue}>{user?.currency || 'USD'}</Text>
+                            <Text style={styles.statValue}>{currencies.find(c => c.code === user?.currency)?.symbol || '$'}</Text>
                             <Text style={styles.statLabel}>Currency</Text>
                         </View>
                         <View style={styles.statDivider} />
                         <View style={styles.statItem}>
-                            <Text style={styles.statValue}>--</Text>
-                            <Text style={styles.statLabel}>Wallets</Text>
+                            <Text style={styles.statValue}>{user?.currency || 'USD'}</Text>
+                            <Text style={styles.statLabel}>Code</Text>
                         </View>
                     </View>
                 </View>
@@ -292,6 +405,64 @@ const ProfileScreen = ({ navigation }) => {
 
                 <View style={{ height: 100 }} />
             </ScrollView>
+
+            {/* Edit Profile Modal */}
+            <Modal
+                visible={showEditModal}
+                transparent
+                animationType="fade"
+                onRequestClose={() => setShowEditModal(false)}
+            >
+                <View style={styles.modalOverlay}>
+                    <View style={styles.modalContent}>
+                        <Text style={styles.modalTitle}>Edit Profile</Text>
+                        
+                        <Input
+                            value={editName}
+                            onChangeText={setEditName}
+                            placeholder="Your name"
+                            icon="person"
+                        />
+
+                        <Text style={[styles.sectionTitle, { fontSize: 14, marginTop: 10, marginBottom: 12 }]}>
+                            Currency
+                        </Text>
+                        <View style={styles.currencyGrid}>
+                            {currencies.map((curr) => (
+                                <TouchableOpacity
+                                    key={curr.code}
+                                    style={[
+                                        styles.currencyOption,
+                                        editCurrency === curr.code && styles.currencyOptionActive
+                                    ]}
+                                    onPress={() => setEditCurrency(curr.code)}
+                                >
+                                    <Text style={styles.currencyText}>
+                                        {curr.symbol} {curr.code}
+                                    </Text>
+                                </TouchableOpacity>
+                            ))}
+                        </View>
+
+                        <View style={styles.modalButtons}>
+                            <TouchableOpacity
+                                style={styles.cancelButton}
+                                onPress={() => setShowEditModal(false)}
+                            >
+                                <Text style={styles.cancelButtonText}>Cancel</Text>
+                            </TouchableOpacity>
+                            <View style={{ flex: 1 }}>
+                                <Button
+                                    title="Save"
+                                    onPress={handleSaveProfile}
+                                    loading={updating}
+                                    icon="checkmark"
+                                />
+                            </View>
+                        </View>
+                    </View>
+                </View>
+            </Modal>
         </View>
     );
 };

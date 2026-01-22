@@ -7,6 +7,7 @@ import {
     RefreshControl,
     TouchableOpacity
 } from 'react-native';
+import { useFocusEffect } from '@react-navigation/native';
 import { LinearGradient } from 'expo-linear-gradient';
 import { Ionicons } from '@expo/vector-icons';
 import { useTheme } from '../context/ThemeContext';
@@ -43,6 +44,12 @@ const DashboardScreen = ({ navigation }) => {
     useEffect(() => {
         fetchData();
     }, [fetchData]);
+
+    useFocusEffect(
+        useCallback(() => {
+            fetchData();
+        }, [fetchData])
+    );
 
     const onRefresh = () => {
         setRefreshing(true);

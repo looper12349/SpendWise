@@ -8,6 +8,7 @@ import {
     TouchableOpacity,
     Alert
 } from 'react-native';
+import { useFocusEffect } from '@react-navigation/native';
 import { Ionicons } from '@expo/vector-icons';
 import { useTheme } from '../context/ThemeContext';
 import { walletTypes } from '../utils/constants';
@@ -41,6 +42,12 @@ const WalletsScreen = ({ navigation }) => {
     useEffect(() => {
         fetchWallets();
     }, [fetchWallets]);
+
+    useFocusEffect(
+        useCallback(() => {
+            fetchWallets();
+        }, [fetchWallets])
+    );
 
     const onRefresh = () => {
         setRefreshing(true);
