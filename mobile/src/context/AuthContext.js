@@ -75,11 +75,26 @@ export const AuthProvider = ({ children }) => {
 
     const logout = async () => {
         try {
+            console.log('Starting logout process...');
+            console.log('Current user before logout:', user);
+            
+            // Clear AsyncStorage
             await AsyncStorage.removeItem('token');
             await AsyncStorage.removeItem('user');
+            
+            console.log('AsyncStorage cleared');
+            
+            // Clear user state
             setUser(null);
+            
+            console.log('User state set to null');
+            
+            // Force a small delay to ensure state updates
+            await new Promise(resolve => setTimeout(resolve, 100));
+            
+            console.log('Logout complete');
         } catch (err) {
-            console.log('Logout error:', err);
+            console.error('Logout error:', err);
         }
     };
 

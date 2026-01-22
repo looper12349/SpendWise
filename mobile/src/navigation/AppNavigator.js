@@ -7,8 +7,10 @@ import MainNavigator from './MainNavigator';
 import { View, ActivityIndicator, StyleSheet } from 'react-native';
 
 const AppNavigator = () => {
-    const { isAuthenticated, loading: authLoading } = useAuth();
+    const { isAuthenticated, loading: authLoading, user } = useAuth();
     const { colors, loading: themeLoading } = useTheme();
+
+    console.log('AppNavigator render - isAuthenticated:', isAuthenticated, 'user:', user);
 
     if (authLoading || themeLoading) {
         return (
@@ -19,7 +21,7 @@ const AppNavigator = () => {
     }
 
     return (
-        <NavigationContainer>
+        <NavigationContainer key={isAuthenticated ? 'authenticated' : 'unauthenticated'}>
             {isAuthenticated ? <MainNavigator /> : <AuthNavigator />}
         </NavigationContainer>
     );

@@ -20,9 +20,11 @@ const ProfileScreen = ({ navigation }) => {
     const { user, logout, updateProfile } = useAuth();
     
     const [showEditModal, setShowEditModal] = useState(false);
+    const [showLogoutModal, setShowLogoutModal] = useState(false);
     const [editName, setEditName] = useState(user?.name || '');
     const [editCurrency, setEditCurrency] = useState(user?.currency || 'USD');
     const [updating, setUpdating] = useState(false);
+    const [loggingOut, setLoggingOut] = useState(false);
 
     const currencies = [
         { code: 'USD', symbol: '$', name: 'US Dollar' },
@@ -35,18 +37,24 @@ const ProfileScreen = ({ navigation }) => {
     ];
 
     const handleLogout = () => {
-        Alert.alert(
-            'Logout',
-            'Are you sure you want to logout?',
-            [
-                { text: 'Cancel', style: 'cancel' },
-                {
-                    text: 'Logout',
-                    style: 'destructive',
-                    onPress: logout
-                }
-            ]
-        );
+        console.log('=== Logout button clicked! ===');
+        setShowLogoutModal(true);
+    };
+
+    const confirmLogout = async () => {
+        try {
+            console.log('=== User confirmed logout ===');
+            setLoggingOut(true);
+            console.log('Calling logout function...');
+            await logout();
+            console.log('=== Logout function completed ===');
+            setShowLogoutModal(false);
+        } catch (error) {
+            console.error('=== Error during logout ===', error);
+            Alert.alert('Error', 'Failed to logout. Please try again.');
+        } finally {
+            setLoggingOut(false);
+        }
     };
 
     const handleThemeChange = (themeId) => {
@@ -275,6 +283,23 @@ const ProfileScreen = ({ navigation }) => {
             borderRadius: 18,
             justifyContent: 'center',
             alignItems: 'center'
+        },
+        logoutIconContainer: {
+            width: 80,
+            height: 80,
+            borderRadius: 40,
+            backgroundColor: colors.error + '20',
+            justifyContent: 'center',
+            alignItems: 'center',
+            alignSelf: 'center',
+            marginBottom: 16
+        },
+        logoutMessage: {
+            color: colors.textMuted,
+            fontSize: 15,
+            textAlign: 'center',
+            marginBottom: 24,
+            lineHeight: 22
         }
     });
 
@@ -416,6 +441,45 @@ const ProfileScreen = ({ navigation }) => {
                                     onPress={handleSaveProfile}
                                     loading={updating}
                                     icon="checkmark"
+                                />
+                            </View>
+                        </View>
+                    </View>
+                </View>
+            </Modal>
+
+            {/* Logout Confirmation Modal */}
+            <Modal
+                visible={showLogoutModal}
+                transparent
+                animationType="fade"
+                onRequestClose={() => setShowLogoutModal(false)}
+            >
+                <View style={styles.modalOverlay}>
+                    <View style={styles.modalContent}>
+                        <View style={styles.logoutIconContainer}>
+                            <Ionicons name="log-out-outline" size={48} color={colors.error} />
+                        </View>
+                        <Text style={styles.modalTitle}>Logout</Text>
+                        <Text style={styles.logoutMessage}>
+                            Are you sure you want to logout?
+                        </Text>
+
+                        <View style={styles.modalButtons}>
+                            <TouchableOpacity
+                                style={styles.cancelButton}
+                                onPress={() => setShowLogoutModal(false)}
+                                disabled={loggingOut}
+                            >
+                                <Text style={styles.cancelButtonText}>Cancel</Text>
+                            </TouchableOpacity>
+                            <View style={{ flex: 1 }}>
+                                <Button
+                                    title="Logout"
+                                    onPress={confirmLogout}
+                                    loading={loggingOut}
+                                    variant="danger"
+                                    icon="log-out"
                                 />
                             </View>
                         </View>
