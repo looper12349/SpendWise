@@ -197,29 +197,6 @@ const ProfileScreen = ({ navigation }) => {
             top: 10,
             right: 10
         },
-        menuSection: {
-            backgroundColor: colors.surface,
-            borderRadius: 20,
-            overflow: 'hidden',
-            marginBottom: 24
-        },
-        menuItem: {
-            flexDirection: 'row',
-            justifyContent: 'space-between',
-            alignItems: 'center',
-            padding: 18,
-            borderBottomWidth: 1,
-            borderBottomColor: colors.surfaceLight
-        },
-        menuLeft: {
-            flexDirection: 'row',
-            alignItems: 'center'
-        },
-        menuLabel: {
-            color: colors.text,
-            fontSize: 15,
-            marginLeft: 14
-        },
         logoutSection: {
             marginBottom: 24
         },
@@ -370,24 +347,6 @@ const ProfileScreen = ({ navigation }) => {
                             </TouchableOpacity>
                         ))}
                     </View>
-                </View>
-
-                {/* Menu Items */}
-                <View style={styles.menuSection}>
-                    {menuItems.map((item, index) => (
-                        <TouchableOpacity
-                            key={index}
-                            style={styles.menuItem}
-                            onPress={item.onPress}
-                            activeOpacity={0.7}
-                        >
-                            <View style={styles.menuLeft}>
-                                <Ionicons name={item.icon} size={22} color={colors.textSecondary} />
-                                <Text style={styles.menuLabel}>{item.label}</Text>
-                            </View>
-                            <Ionicons name="chevron-forward" size={20} color={colors.textMuted} />
-                        </TouchableOpacity>
-                    ))}
                 </View>
 
                 {/* Logout Button */}
