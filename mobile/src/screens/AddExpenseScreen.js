@@ -7,7 +7,8 @@ import {
     KeyboardAvoidingView,
     Platform,
     TouchableOpacity,
-    Alert
+    Alert,
+    TextInput
 } from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
 import { useTheme } from '../context/ThemeContext';
@@ -170,7 +171,7 @@ const AddExpenseScreen = ({ navigation, route }) => {
             borderBottomColor: colors.primary,
             paddingBottom: 4
         },
-        amountInputField: {
+        amountInput: {
             color: colors.text,
             fontSize: 48,
             fontWeight: '700',
@@ -263,12 +264,13 @@ const AddExpenseScreen = ({ navigation, route }) => {
                         <View style={styles.amountRow}>
                             <Text style={styles.currencySymbol}>{getCurrencySymbol()}</Text>
                             <View style={styles.amountInputWrapper}>
-                                <Input
+                                <TextInput
                                     value={amount}
                                     onChangeText={setAmount}
                                     placeholder="0"
+                                    placeholderTextColor={colors.textMuted}
                                     keyboardType="decimal-pad"
-                                    style={{ marginBottom: 0 }}
+                                    style={styles.amountInput}
                                 />
                             </View>
                         </View>
@@ -339,7 +341,6 @@ const AddExpenseScreen = ({ navigation, route }) => {
                             loading={loading}
                             icon={isEditing ? 'checkmark' : 'add'}
                         />
-                    </View>
                     </View>
                 </ScrollView>
             </KeyboardAvoidingView>
