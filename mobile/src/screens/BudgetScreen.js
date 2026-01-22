@@ -13,13 +13,15 @@ import { Ionicons } from '@expo/vector-icons';
 import { useTheme } from '../context/ThemeContext';
 import { categories } from '../utils/constants';
 import { budgetsAPI } from '../api/client';
-import { formatCurrency, getCurrentMonthYear, getMonthName } from '../utils/helpers';
+import { getCurrentMonthYear, getMonthName } from '../utils/helpers';
+import { useCurrency } from '../hooks/useCurrency';
 import BudgetProgress from '../components/BudgetProgress';
 import Button from '../components/Button';
 import Input from '../components/Input';
 
 const BudgetScreen = ({ navigation }) => {
     const { colors } = useTheme();
+    const { formatCurrency } = useCurrency();
     const [budgetData, setBudgetData] = useState(null);
     const [loading, setLoading] = useState(true);
     const [refreshing, setRefreshing] = useState(false);
@@ -106,6 +108,9 @@ const BudgetScreen = ({ navigation }) => {
             paddingHorizontal: 20
         },
         header: {
+            flexDirection: 'row',
+            justifyContent: 'space-between',
+            alignItems: 'center',
             paddingTop: 60,
             marginBottom: 24
         },
@@ -119,46 +124,92 @@ const BudgetScreen = ({ navigation }) => {
             color: colors.textMuted,
             fontSize: 16
         },
-        mainCard: {
-            backgroundColor: colors.surface,
-            borderRadius: 20,
-            padding: 24,
-            marginBottom: 24
+        editButton: {
+            width: 44,
+            height: 44,
+            borderRadius: 22,
+            backgroundColor: colors.primary + '20',
+            justifyContent: 'center',
+            alignItems: 'center'
         },
-        cardLabel: {
-            color: colors.textSecondary,
-            fontSize: 14,
-            marginBottom: 8
-        },
-        budgetAmount: {
-            color: colors.text,
-            fontSize: 32,
-            fontWeight: '700',
+        cardsRow: {
+            flexDirection: 'row',
+            gap: 12,
             marginBottom: 16
         },
-        ofLimit: {
-            color: colors.textMuted,
-            fontSize: 18,
-            fontWeight: '400'
+        card: {
+            backgroundColor: colors.surface,
+            borderRadius: 20,
+            padding: 20
         },
-        statsRow: {
+        cardHalf: {
+            flex: 1
+        },
+        cardLabel: {
+            color: colors.textMuted,
+            fontSize: 13,
+            marginBottom: 8
+        },
+        cardAmount: {
+            color: colors.text,
+            fontSize: 24,
+            fontWeight: '700',
+            marginBottom: 12
+        },
+        cardBadge: {
+            flexDirection: 'row',
+            alignItems: 'center',
+            backgroundColor: colors.primary + '20',
+            paddingVertical: 4,
+            paddingHorizontal: 10,
+            borderRadius: 12,
+            alignSelf: 'flex-start',
+            gap: 4
+        },
+        cardBadgeText: {
+            color: colors.primary,
+            fontSize: 11,
+            fontWeight: '600'
+        },
+        remainingCard: {
+            backgroundColor: colors.surface,
+            borderRadius: 20,
+            padding: 20,
+            marginBottom: 24
+        },
+        remainingHeader: {
+            flexDirection: 'row',
+            justifyContent: 'space-between',
+            alignItems: 'center',
+            marginBottom: 16
+        },
+        remainingLabel: {
+            color: colors.textMuted,
+            fontSize: 14
+        },
+        remainingAmount: {
+            fontSize: 28,
+            fontWeight: '700'
+        },
+        remainingStats: {
             flexDirection: 'row',
             marginTop: 16,
             paddingTop: 16,
             borderTopWidth: 1,
-            borderTopColor: colors.surfaceLight
+            borderTopColor: colors.surfaceLight,
+            gap: 24
         },
-        statItem: {
+        remainingStat: {
             flex: 1
         },
-        statLabel: {
+        remainingStatLabel: {
             color: colors.textMuted,
             fontSize: 12,
             marginBottom: 4
         },
-        statValue: {
+        remainingStatValue: {
             color: colors.text,
-            fontSize: 16,
+            fontSize: 18,
             fontWeight: '600'
         },
         section: {
@@ -172,40 +223,85 @@ const BudgetScreen = ({ navigation }) => {
         },
         categoryItem: {
             backgroundColor: colors.surface,
-            borderRadius: 12,
+            borderRadius: 16,
             padding: 16,
-            marginBottom: 10
+            marginBottom: 12
         },
         categoryHeader: {
             flexDirection: 'row',
             alignItems: 'center',
-            marginBottom: 8
+            marginBottom: 12
+        },
+        categoryIcon: {
+            width: 40,
+            height: 40,
+            borderRadius: 20,
+            justifyContent: 'center',
+            alignItems: 'center',
+            marginRight: 12
+        },
+        categoryInfo: {
+            flex: 1
         },
         categoryName: {
             color: colors.text,
-            fontSize: 14,
-            fontWeight: '500',
-            marginLeft: 10
-        },
-        categoryProgress: {
-            marginTop: 8
+            fontSize: 15,
+            fontWeight: '600',
+            marginBottom: 4
         },
         categoryAmount: {
             color: colors.text,
             fontSize: 16,
-            fontWeight: '600',
-            marginBottom: 8
+            fontWeight: '600'
         },
         categoryLimit: {
             color: colors.textMuted,
+            fontSize: 14,
             fontWeight: '400'
         },
-        categoryInput: {
-            marginTop: 8,
-            marginBottom: 0
+        categoryPercentage: {
+            backgroundColor: colors.surfaceLight,
+            paddingVertical: 6,
+            paddingHorizontal: 12,
+            borderRadius: 12
+        },
+        percentageText: {
+            fontSize: 14,
+            fontWeight: '600'
+        },
+        categoryProgress: {
+            marginTop: 8
+        },
+        editCard: {
+            backgroundColor: colors.surface,
+            borderRadius: 20,
+            padding: 20,
+            marginBottom: 24
+        },
+        editCardTitle: {
+            color: colors.text,
+            fontSize: 16,
+            fontWeight: '600',
+            marginBottom: 12
+        },
+        categoryEditItem: {
+            backgroundColor: colors.surface,
+            borderRadius: 16,
+            padding: 16,
+            marginBottom: 12
         },
         buttonContainer: {
-            paddingBottom: 100
+            marginBottom: 24
+        },
+        cancelButton: {
+            alignItems: 'center',
+            paddingVertical: 14,
+            marginTop: 12
+        },
+        cancelButtonText: {
+            color: colors.textMuted,
+            fontSize: 15,
+            fontWeight: '600'
         }
     });
 
@@ -221,17 +317,29 @@ const BudgetScreen = ({ navigation }) => {
                     />
                 }
             >
-                {/* Header */}
+                {/* Header with Edit Button */}
                 <View style={styles.header}>
-                    <Text style={styles.title}>Budget</Text>
-                    <Text style={styles.subtitle}>{getMonthName(month)} {year}</Text>
+                    <View>
+                        <Text style={styles.title}>Budget</Text>
+                        <Text style={styles.subtitle}>{getMonthName(month)} {year}</Text>
+                    </View>
+                    <TouchableOpacity
+                        style={styles.editButton}
+                        onPress={() => setIsEditing(!isEditing)}
+                    >
+                        <Ionicons 
+                            name={isEditing ? "checkmark" : "pencil"} 
+                            size={20} 
+                            color={colors.primary} 
+                        />
+                    </TouchableOpacity>
                 </View>
 
-                {/* Main Budget Card */}
-                <View style={styles.mainCard}>
-                    {isEditing ? (
-                        <View>
-                            <Text style={styles.cardLabel}>Set Monthly Budget</Text>
+                {isEditing ? (
+                    /* Edit Mode */
+                    <View>
+                        <View style={styles.editCard}>
+                            <Text style={styles.editCardTitle}>Monthly Budget Limit</Text>
                             <Input
                                 value={totalLimit}
                                 onChangeText={setTotalLimit}
@@ -240,112 +348,178 @@ const BudgetScreen = ({ navigation }) => {
                                 icon="cash"
                             />
                         </View>
-                    ) : (
-                        <>
-                            <Text style={styles.cardLabel}>Monthly Budget</Text>
-                            <Text style={styles.budgetAmount}>
-                                {formatCurrency(totalSpent)}
-                                <Text style={styles.ofLimit}> / {formatCurrency(budgetLimit)}</Text>
-                            </Text>
+
+                        <View style={styles.section}>
+                            <Text style={styles.sectionTitle}>Category Limits</Text>
+                            {categories.map((cat) => (
+                                <View key={cat.id} style={styles.categoryEditItem}>
+                                    <View style={styles.categoryHeader}>
+                                        <Ionicons 
+                                            name={cat.icon} 
+                                            size={20} 
+                                            color={colors.categories[cat.id]} 
+                                        />
+                                        <Text style={styles.categoryName}>{cat.label}</Text>
+                                    </View>
+                                    <Input
+                                        value={categoryLimits[cat.id] || ''}
+                                        onChangeText={(value) => setCategoryLimits({
+                                            ...categoryLimits,
+                                            [cat.id]: value
+                                        })}
+                                        placeholder="Optional limit"
+                                        keyboardType="decimal-pad"
+                                        icon="cash"
+                                    />
+                                </View>
+                            ))}
+                        </View>
+
+                        <View style={styles.buttonContainer}>
+                            <Button
+                                title="Save Budget"
+                                onPress={handleSaveBudget}
+                                icon="checkmark"
+                            />
+                            <TouchableOpacity
+                                style={styles.cancelButton}
+                                onPress={() => setIsEditing(false)}
+                            >
+                                <Text style={styles.cancelButtonText}>Cancel</Text>
+                            </TouchableOpacity>
+                        </View>
+                    </View>
+                ) : (
+                    /* View Mode - 2 Card Layout */
+                    <View>
+                        {/* Overview Cards Row */}
+                        <View style={styles.cardsRow}>
+                            {/* Total Budget Card */}
+                            <View style={[styles.card, styles.cardHalf]}>
+                                <Text style={styles.cardLabel}>Total Budget</Text>
+                                <Text style={styles.cardAmount}>
+                                    {formatCurrency(budgetLimit)}
+                                </Text>
+                                <View style={styles.cardBadge}>
+                                    <Ionicons name="flag" size={14} color={colors.primary} />
+                                    <Text style={styles.cardBadgeText}>Limit</Text>
+                                </View>
+                            </View>
+
+                            {/* Total Spent Card */}
+                            <View style={[styles.card, styles.cardHalf]}>
+                                <Text style={styles.cardLabel}>Total Spent</Text>
+                                <Text style={[
+                                    styles.cardAmount,
+                                    { color: totalSpent > budgetLimit ? colors.error : colors.success }
+                                ]}>
+                                    {formatCurrency(totalSpent)}
+                                </Text>
+                                <View style={[
+                                    styles.cardBadge,
+                                    { backgroundColor: totalSpent > budgetLimit ? colors.error + '20' : colors.success + '20' }
+                                ]}>
+                                    <Ionicons 
+                                        name={totalSpent > budgetLimit ? "alert-circle" : "checkmark-circle"} 
+                                        size={14} 
+                                        color={totalSpent > budgetLimit ? colors.error : colors.success} 
+                                    />
+                                    <Text style={[
+                                        styles.cardBadgeText,
+                                        { color: totalSpent > budgetLimit ? colors.error : colors.success }
+                                    ]}>
+                                        {totalSpent > budgetLimit ? 'Over' : 'On Track'}
+                                    </Text>
+                                </View>
+                            </View>
+                        </View>
+
+                        {/* Remaining Budget Card */}
+                        <View style={styles.remainingCard}>
+                            <View style={styles.remainingHeader}>
+                                <Text style={styles.remainingLabel}>Remaining Budget</Text>
+                                <Text style={[
+                                    styles.remainingAmount,
+                                    { color: (budgetLimit - totalSpent) >= 0 ? colors.success : colors.error }
+                                ]}>
+                                    {formatCurrency(Math.abs(budgetLimit - totalSpent))}
+                                </Text>
+                            </View>
                             <BudgetProgress
                                 spent={totalSpent}
                                 limit={budgetLimit}
-                                showLabel={false}
+                                color={colors.primary}
                             />
-                            <View style={styles.statsRow}>
-                                <View style={styles.statItem}>
-                                    <Text style={styles.statLabel}>Remaining</Text>
-                                    <Text style={[
-                                        styles.statValue,
-                                        { color: budgetLimit - totalSpent >= 0 ? colors.success : colors.error }
-                                    ]}>
-                                        {formatCurrency(Math.max(0, budgetLimit - totalSpent))}
+                            <View style={styles.remainingStats}>
+                                <View style={styles.remainingStat}>
+                                    <Text style={styles.remainingStatLabel}>Used</Text>
+                                    <Text style={styles.remainingStatValue}>
+                                        {budgetLimit > 0 ? Math.round((totalSpent / budgetLimit) * 100) : 0}%
                                     </Text>
                                 </View>
-                                <View style={styles.statItem}>
-                                    <Text style={styles.statLabel}>Daily Average</Text>
-                                    <Text style={styles.statValue}>
-                                        {formatCurrency((budgetLimit - totalSpent) / (30 - new Date().getDate()))}
+                                <View style={styles.remainingStat}>
+                                    <Text style={styles.remainingStatLabel}>Days Left</Text>
+                                    <Text style={styles.remainingStatValue}>
+                                        {new Date(year, month, 0).getDate() - new Date().getDate()}
                                     </Text>
                                 </View>
                             </View>
-                        </>
-                    )}
-                </View>
+                        </View>
 
-                {/* Category Budgets */}
-                <View style={styles.section}>
-                    <Text style={styles.sectionTitle}>
-                        {isEditing ? 'Set Category Limits' : 'Category Breakdown'}
-                    </Text>
+                        {/* Category Breakdown */}
+                        <View style={styles.section}>
+                            <Text style={styles.sectionTitle}>Category Breakdown</Text>
+                            {budget?.categoryLimits?.map((catLimit) => {
+                                const cat = categories.find(c => c.id === catLimit.category);
+                                const spent = getCategorySpending(catLimit.category);
+                                const percentage = catLimit.limit > 0 
+                                    ? Math.round((spent / catLimit.limit) * 100) 
+                                    : 0;
 
-                    {categories.map((cat) => {
-                        const spent = getCategorySpending(cat.id);
-                        const limit = budget?.categoryLimits?.find(c => c.category === cat.id)?.limit || 0;
-                        const categoryColor = colors.categories[cat.id];
-
-                        return (
-                            <View key={cat.id} style={styles.categoryItem}>
-                                <View style={styles.categoryHeader}>
-                                    <Ionicons name={cat.icon} size={20} color={categoryColor} />
-                                    <Text style={styles.categoryName}>{cat.label}</Text>
-                                </View>
-
-                                {isEditing ? (
-                                    <Input
-                                        value={categoryLimits[cat.id] || ''}
-                                        onChangeText={(val) => setCategoryLimits(prev => ({
-                                            ...prev,
-                                            [cat.id]: val
-                                        }))}
-                                        placeholder="0"
-                                        keyboardType="decimal-pad"
-                                        style={styles.categoryInput}
-                                    />
-                                ) : (
-                                    <View style={styles.categoryProgress}>
-                                        <Text style={styles.categoryAmount}>
-                                            {formatCurrency(spent)}
-                                            {limit > 0 && (
-                                                <Text style={styles.categoryLimit}> / {formatCurrency(limit)}</Text>
-                                            )}
-                                        </Text>
-                                        {limit > 0 && (
-                                            <BudgetProgress spent={spent} limit={limit} showLabel={false} />
-                                        )}
+                                return (
+                                    <View key={catLimit.category} style={styles.categoryItem}>
+                                        <View style={styles.categoryHeader}>
+                                            <View style={[
+                                                styles.categoryIcon,
+                                                { backgroundColor: colors.categories[catLimit.category] + '20' }
+                                            ]}>
+                                                <Ionicons 
+                                                    name={cat?.icon || 'ellipse'} 
+                                                    size={20} 
+                                                    color={colors.categories[catLimit.category]} 
+                                                />
+                                            </View>
+                                            <View style={styles.categoryInfo}>
+                                                <Text style={styles.categoryName}>{cat?.label || catLimit.category}</Text>
+                                                <Text style={styles.categoryAmount}>
+                                                    {formatCurrency(spent)}
+                                                    <Text style={styles.categoryLimit}> / {formatCurrency(catLimit.limit)}</Text>
+                                                </Text>
+                                            </View>
+                                            <View style={styles.categoryPercentage}>
+                                                <Text style={[
+                                                    styles.percentageText,
+                                                    { color: percentage > 100 ? colors.error : colors.text }
+                                                ]}>
+                                                    {percentage}%
+                                                </Text>
+                                            </View>
+                                        </View>
+                                        <View style={styles.categoryProgress}>
+                                            <BudgetProgress
+                                                spent={spent}
+                                                limit={catLimit.limit}
+                                                color={colors.categories[catLimit.category]}
+                                            />
+                                        </View>
                                     </View>
-                                )}
-                            </View>
-                        );
-                    })}
-                </View>
+                                );
+                            })}
+                        </View>
+                    </View>
+                )}
 
-                {/* Action Button */}
-                <View style={styles.buttonContainer}>
-                    {isEditing ? (
-                        <>
-                            <Button
-                                title="Save Budget"
-                                onPress={handleSave}
-                                size="large"
-                                icon="checkmark"
-                            />
-                            <Button
-                                title="Cancel"
-                                onPress={() => setIsEditing(false)}
-                                variant="outline"
-                                style={{ marginTop: 12 }}
-                            />
-                        </>
-                    ) : (
-                        <Button
-                            title="Edit Budget"
-                            onPress={() => setIsEditing(true)}
-                            icon="create"
-                            size="large"
-                        />
-                    )}
-                </View>
+                <View style={{ height: 100 }} />
             </ScrollView>
         </View>
     );

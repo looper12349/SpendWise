@@ -60,7 +60,7 @@ const MainNavigator = () => {
                     let iconName;
 
                     switch (route.name) {
-                        case 'Dashboard':
+                        case 'Home':
                             iconName = focused ? 'home' : 'home-outline';
                             break;
                         case 'Expenses':
@@ -86,7 +86,7 @@ const MainNavigator = () => {
                 }
             })}
         >
-            <Tab.Screen name="Dashboard" component={DashboardScreen} />
+            <Tab.Screen name="Home" component={DashboardScreen} />
             <Tab.Screen name="Expenses" component={ExpensesStack} />
             <Tab.Screen name="Charts" component={ChartsScreen} />
             <Tab.Screen name="Budget" component={BudgetScreen} />

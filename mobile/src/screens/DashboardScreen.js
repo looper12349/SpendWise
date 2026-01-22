@@ -12,13 +12,15 @@ import { LinearGradient } from 'expo-linear-gradient';
 import { Ionicons } from '@expo/vector-icons';
 import { useTheme } from '../context/ThemeContext';
 import { useAuth } from '../context/AuthContext';
+import { useCurrency } from '../hooks/useCurrency';
 import { analyticsAPI, expensesAPI } from '../api/client';
-import { formatCurrency, getMonthName, getCurrentMonthYear } from '../utils/helpers';
+import { getMonthName, getCurrentMonthYear } from '../utils/helpers';
 import ExpenseCard from '../components/ExpenseCard';
 
 const DashboardScreen = ({ navigation }) => {
     const { colors } = useTheme();
     const { user } = useAuth();
+    const { formatCurrency } = useCurrency();
     const [overview, setOverview] = useState(null);
     const [recentExpenses, setRecentExpenses] = useState([]);
     const [loading, setLoading] = useState(true);

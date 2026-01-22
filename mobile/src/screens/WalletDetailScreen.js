@@ -13,8 +13,9 @@ import { Ionicons } from '@expo/vector-icons';
 import { useTheme } from '../context/ThemeContext';
 import { categories } from '../utils/constants';
 import { walletsAPI } from '../api/client';
-import { formatCurrency, getInitials } from '../utils/helpers';
+import { getInitials } from '../utils/helpers';
 import { useAuth } from '../context/AuthContext';
+import { useCurrency } from '../hooks/useCurrency';
 import Button from '../components/Button';
 import Input from '../components/Input';
 import CategoryPicker from '../components/CategoryPicker';
@@ -23,6 +24,7 @@ const WalletDetailScreen = ({ navigation, route }) => {
     const { colors } = useTheme();
     const { wallet: initialWallet } = route.params;
     const { user } = useAuth();
+    const { formatCurrency } = useCurrency();
 
     const [walletData, setWalletData] = useState(null);
     const [loading, setLoading] = useState(true);
